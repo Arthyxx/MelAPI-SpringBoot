@@ -4,6 +4,7 @@ import br.com.arthyxx.dto.cliente.ClienteResponseDTO;
 import br.com.arthyxx.dto.cliente.CreateClienteDTO;
 import br.com.arthyxx.dto.cliente.PatchClienteDTO;
 import br.com.arthyxx.dto.cliente.PutClienteDTO;
+import br.com.arthyxx.exceptions.ResourceNotFoundException;
 import br.com.arthyxx.mapper.ClienteMapper;
 import br.com.arthyxx.models.Cliente;
 import br.com.arthyxx.repository.ClienteRepository;
@@ -29,7 +30,7 @@ public class ClienteService {
 
     public ClienteResponseDTO findById(Long id){
         Cliente entity = repository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("Cliente não encontrado!")
+                () -> new ResourceNotFoundException("Cliente não encontrado!")
         );
 
         return mapper.toResponseDTO(entity);
@@ -43,7 +44,7 @@ public class ClienteService {
 
     public ClienteResponseDTO update(Long id, PutClienteDTO dto){
         Cliente entity = repository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("Cliente não encontrado!")
+                () -> new ResourceNotFoundException("Cliente não encontrado!")
         );
 
         mapper.updateFromPutDTO(dto, entity);
@@ -55,7 +56,7 @@ public class ClienteService {
 
     public ClienteResponseDTO partialUpdate(Long id, PatchClienteDTO dto){
         Cliente entity = repository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("Cliente não encontrado!")
+                () -> new ResourceNotFoundException("Cliente não encontrado!")
         );
 
         mapper.updateFromPatchDTO(dto, entity);
@@ -67,7 +68,7 @@ public class ClienteService {
 
     public void delete(Long id){
         Cliente entity = repository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("Cliente não encontrado!")
+                () -> new ResourceNotFoundException("Cliente não encontrado!")
         );
 
         repository.delete(entity);
