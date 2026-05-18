@@ -5,10 +5,7 @@ import br.com.arthyxx.dto.produto.PatchProdutoDTO;
 import br.com.arthyxx.dto.produto.ProdutoResponseDTO;
 import br.com.arthyxx.dto.produto.PutProdutoDTO;
 import br.com.arthyxx.models.Produto;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -20,8 +17,10 @@ public interface ProdutoMapper {
 
     List<ProdutoResponseDTO> toResponseDTOList(List<Produto> produtos);
 
+    @Mapping(target = "category", ignore = true)
     void updateFromPutDTO(PutProdutoDTO dto, @MappingTarget Produto produto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "category", ignore = true)
     void updateFromPatchDTO(PatchProdutoDTO dto, @MappingTarget Produto produto);
 }
