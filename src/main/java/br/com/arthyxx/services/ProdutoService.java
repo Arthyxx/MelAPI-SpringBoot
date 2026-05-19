@@ -4,6 +4,7 @@ import br.com.arthyxx.dto.produto.CreateProdutoDTO;
 import br.com.arthyxx.dto.produto.PatchProdutoDTO;
 import br.com.arthyxx.dto.produto.ProdutoResponseDTO;
 import br.com.arthyxx.dto.produto.PutProdutoDTO;
+import br.com.arthyxx.exceptions.BusinessException;
 import br.com.arthyxx.exceptions.ResourceNotFoundException;
 import br.com.arthyxx.mapper.ProdutoMapper;
 import br.com.arthyxx.models.Categoria;
@@ -33,17 +34,13 @@ public class ProdutoService {
     }
 
     public ProdutoResponseDTO findById(Long id){
-        Produto entity = produtoRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Produto não encontrado!")
-        );
+        Produto entity = findProdutoById(id);
 
         return mapper.toResponseDTO(entity);
     }
 
     public ProdutoResponseDTO create(CreateProdutoDTO dto){
-        Categoria categoria = categoriaRepository.findById(dto.categoryId()).orElseThrow(
-                () -> new ResourceNotFoundException("Categoria não encontrada!")
-        );
+        Categoria categoria = findCategoriaById(dto.categoryId());
 
         Produto entity = mapper.toEntity(dto);
         entity.setCategory(categoria);
@@ -52,30 +49,49 @@ public class ProdutoService {
     }
 
     public ProdutoResponseDTO update(Long id, PutProdutoDTO dto){
-        Produto entity = produtoRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Produto não encontrado!")
-        );
+        Produto entity = findProdutoById(id);
+        Categoria categoria = findCategoriaById(dto.categoryId());
 
         mapper.updateFromPutDTO(dto, entity);
+        entity.setCategory(categoria);
 
         return mapper.toResponseDTO(produtoRepository.save(entity));
     }
 
     public ProdutoResponseDTO partialUpdate(Long id, PatchProdutoDTO dto){
-        Produto entity = produtoRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Produto não encontrado!")
-        );
+        Produto entity = findProdutoById(id);
 
         mapper.updateFromPatchDTO(dto, entity);
+
+        if (dto.categoryId() != null){
+            Categoria categoria = findCategoriaById(dto.categoryId());
+            entity.setCategory(categoria);
+        }
 
         return mapper.toResponseDTO(produtoRepository.save(entity));
     }
 
     public void delete(Long id){
-        Produto entity = produtoRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Produto não encontrado!")
-        );
+        Produto entity = findProdutoById(id);
 
         produtoRepository.delete(entity);
+    }
+
+    private Produto findProdutoById(Long id){
+        return produtoRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Produto não encontrado!")
+        );
+    }
+
+    private Categoria findCategoriaById(Long id){
+        Categoria categoria = categoriaRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Categoria não encontrada!")
+        );
+
+        if (!categoria.isActive()){
+            throw new BusinessException("Não é possível vincular produto a uma categoria inativa.");
+        }
+
+        return categoria;
     }
 }
