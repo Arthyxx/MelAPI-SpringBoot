@@ -4,6 +4,7 @@ import br.com.arthyxx.dto.pedido.CreateItemPedidoDTO;
 import br.com.arthyxx.dto.pedido.CreatePedidoDTO;
 import br.com.arthyxx.dto.pedido.PedidoResponseDTO;
 import br.com.arthyxx.dto.pedido.UpdateStatusPedidoDTO;
+import br.com.arthyxx.enums.StatusPedido;
 import br.com.arthyxx.exceptions.BusinessException;
 import br.com.arthyxx.exceptions.ResourceNotFoundException;
 import br.com.arthyxx.mapper.PedidoMapper;
@@ -96,6 +97,8 @@ public class PedidoService {
     public PedidoResponseDTO updateStatus(Long id, UpdateStatusPedidoDTO dto){
         Pedido entity = findPedidoById(id);
 
+        validateStatusTransition(entity, dto);
+
         entity.setStatus(dto.status());
 
         Pedido updatedEntity = pedidoRepository.save(entity);
@@ -121,5 +124,19 @@ public class PedidoService {
         return produtoRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Produto não encontrado!")
         );
+    }
+
+    private void validateStatusTransition(Pedido pedido, UpdateStatusPedidoDTO dto){
+        if (pedido.getStatus() == dto.status()){
+            throw new BusinessException("O pedido já está com esse status.");
+        }
+
+        if (pedido.getStatus() == StatusPedido.CANCELADO){
+            throw new BusinessException("Não é possível alterar o status de um pedido cancelado");
+        }
+
+        if (pedido.getStatus() == StatusPedido.ENTREGUE){
+            throw new BusinessException("Não é possível alterar o status de um pedido entregue.");
+        }
     }
 }
