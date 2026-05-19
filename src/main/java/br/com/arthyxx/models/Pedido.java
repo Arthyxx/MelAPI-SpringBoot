@@ -51,6 +51,16 @@ public class Pedido {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void addItem(ItemPedido item){
+        this.items.add(item);
+        item.setPedido(this);
+    }
+
+    public void removeItem(ItemPedido item){
+        this.items.remove(item);
+        item.setPedido(null);
+    }
+
     public Pedido() {
     }
 
