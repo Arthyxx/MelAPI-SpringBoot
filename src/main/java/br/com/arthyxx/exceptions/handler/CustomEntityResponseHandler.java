@@ -1,5 +1,6 @@
 package br.com.arthyxx.exceptions.handler;
 
+import br.com.arthyxx.exceptions.BusinessException;
 import br.com.arthyxx.exceptions.ExceptionResponse;
 import br.com.arthyxx.exceptions.ResourceNotFoundException;
 import br.com.arthyxx.exceptions.ValidationErrorResponse;
@@ -50,6 +51,17 @@ public class CustomEntityResponseHandler {
                 new Date(),
                 "Erro de validação.",
                 errors,
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public final ResponseEntity<ExceptionResponse> handleBusinessException(BusinessException ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
                 request.getDescription(false)
         );
 
