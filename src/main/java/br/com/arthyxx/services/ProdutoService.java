@@ -40,6 +40,8 @@ public class ProdutoService {
     }
 
     public ProdutoResponseDTO create(CreateProdutoDTO dto){
+        if (produtoRepository.existsByName(dto.name())) throw new BusinessException("Já existe um produto com esse nome.");
+
         Categoria categoria = findCategoriaById(dto.categoryId());
 
         Produto entity = mapper.toEntity(dto);
