@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker ###
+.env
+
+docker-data/
+
+*.jar
+*.log
+
+**/src/test/resourcers
+src/test/resources/application-test.yml

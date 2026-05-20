@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: melapi-postgres
+    environment:
+      POSTGRES_DB: melapi
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: melapi-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_DRIVER: org.postgresql.Driver
+      DB_URL: jdbc:postgresql://postgres:5432/melapi
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      DB_DDL: update
+      JWT_SECRET: melapi_jwt_secret_2025
+
+volumes:
+  postgres_data:
