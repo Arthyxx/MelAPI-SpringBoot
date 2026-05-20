@@ -18,7 +18,7 @@ public class Cliente {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 100)
     private String password;
 
     @Enumerated(EnumType.STRING)
