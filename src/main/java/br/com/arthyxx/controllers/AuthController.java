@@ -2,7 +2,7 @@ package br.com.arthyxx.controllers;
 
 import br.com.arthyxx.dto.auth.LoginRequestDTO;
 import br.com.arthyxx.dto.auth.LoginResponseDTO;
-import br.com.arthyxx.services.AuthService;
+import br.com.arthyxx.services.auth.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

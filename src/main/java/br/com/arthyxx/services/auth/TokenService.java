@@ -1,4 +1,4 @@
-package br.com.arthyxx.services;
+package br.com.arthyxx.services.auth;
 
 import br.com.arthyxx.models.Cliente;
 import com.auth0.jwt.JWT;

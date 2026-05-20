@@ -1,4 +1,4 @@
-package br.com.arthyxx.services;
+package br.com.arthyxx.services.auth;
 
 import br.com.arthyxx.dto.auth.LoginRequestDTO;
 import br.com.arthyxx.dto.auth.LoginResponseDTO;
