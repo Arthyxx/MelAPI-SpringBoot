@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final ClienteRepository clienteRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
-    public AuthService(ClienteRepository clienteRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(ClienteRepository clienteRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
         this.clienteRepository = clienteRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
     }
 
     public LoginResponseDTO login(LoginRequestDTO dto){
@@ -27,6 +29,8 @@ public class AuthService {
 
         if (!passwordMatches) throw new BusinessException("Email ou senha inválidos.");
 
-        return new LoginResponseDTO("token-sera-gerado-aqui");
+        String token = tokenService.generateToken(cliente);
+
+        return new LoginResponseDTO(token);
     }
 }
