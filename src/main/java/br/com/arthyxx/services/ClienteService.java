@@ -8,6 +8,7 @@ import br.com.arthyxx.exceptions.ResourceNotFoundException;
 import br.com.arthyxx.mapper.ClienteMapper;
 import br.com.arthyxx.models.Cliente;
 import br.com.arthyxx.repository.ClienteRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +17,12 @@ import java.util.List;
 public class ClienteService {
     private final ClienteRepository repository;
     private final ClienteMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public ClienteService(ClienteRepository repository, ClienteMapper mapper) {
+    public ClienteService(ClienteRepository repository, ClienteMapper mapper, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.mapper = mapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<ClienteResponseDTO> findAll(){
@@ -38,6 +41,8 @@ public class ClienteService {
 
     public ClienteResponseDTO create(CreateClienteDTO dto){
         Cliente entity = mapper.toEntity(dto);
+
+        entity.setPassword(passwordEncoder.encode(dto.password()));
 
         return mapper.toResponseDTO(repository.save(entity));
     }
