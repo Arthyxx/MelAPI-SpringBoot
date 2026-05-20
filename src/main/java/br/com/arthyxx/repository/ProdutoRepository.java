@@ -11,15 +11,21 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     boolean existsByName(String name);
-
     boolean existsByNameAndIdNot(String name, Long id);
 
-    @Query("""
-            SELECT p FROM Produto p
-            WHERE (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
-            AND (:categoryId IS NULL OR p.category.id = :categoryId)
-            AND (:active IS NULL OR p.active = :active)
-            """)
+    @Query(value = """
+            SELECT * FROM produtos p
+            WHERE (CAST(:name AS text) IS NULL OR p.name ILIKE CONCAT('%', CAST(:name AS text), '%'))
+            AND (CAST(:categoryId AS bigint) IS NULL OR p.category_id = CAST(:categoryId AS bigint))
+            AND (CAST(:active AS boolean) IS NULL OR p.active = CAST(:active AS boolean))
+            """,
+            countQuery = """
+            SELECT COUNT(*) FROM produtos p
+            WHERE (CAST(:name AS text) IS NULL OR p.name ILIKE CONCAT('%', CAST(:name AS text), '%'))
+            AND (CAST(:categoryId AS bigint) IS NULL OR p.category_id = CAST(:categoryId AS bigint))
+            AND (CAST(:active AS boolean) IS NULL OR p.active = CAST(:active AS boolean))
+            """,
+            nativeQuery = true)
     Page<Produto> findAllWithFilter(
             @Param("name") String name,
             @Param("categoryId") Long categoryId,
