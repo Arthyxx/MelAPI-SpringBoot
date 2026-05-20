@@ -1,5 +1,6 @@
 package br.com.arthyxx.models;
 
+import br.com.arthyxx.enums.UserRole;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -20,7 +21,19 @@ public class Cliente {
     @Column(nullable = false, length = 30)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role = UserRole.CLIENTE;
+
     public Cliente() {
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     public Long getId() {
@@ -56,14 +69,15 @@ public class Cliente {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass()) return false;
-        Cliente cliente = (Cliente) object;
-        return Objects.equals(getId(), cliente.getId()) && Objects.equals(getName(), cliente.getName()) && Objects.equals(getEmail(), cliente.getEmail()) && Objects.equals(getPassword(), cliente.getPassword());
+    public boolean equals(Object o) {
+
+        if (o == null || getClass() != o.getClass()) return false;
+        Cliente cliente = (Cliente) o;
+        return Objects.equals(getId(), cliente.getId()) && Objects.equals(getName(), cliente.getName()) && Objects.equals(getEmail(), cliente.getEmail()) && Objects.equals(getPassword(), cliente.getPassword()) && getRole() == cliente.getRole();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getPassword());
+        return Objects.hash(getId(), getName(), getEmail(), getPassword(), getRole());
     }
 }
