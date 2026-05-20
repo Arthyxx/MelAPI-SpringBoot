@@ -1,9 +1,6 @@
 package br.com.arthyxx.services;
 
-import br.com.arthyxx.dto.produto.CreateProdutoDTO;
-import br.com.arthyxx.dto.produto.PatchProdutoDTO;
-import br.com.arthyxx.dto.produto.ProdutoResponseDTO;
-import br.com.arthyxx.dto.produto.PutProdutoDTO;
+import br.com.arthyxx.dto.produto.*;
 import br.com.arthyxx.exceptions.BusinessException;
 import br.com.arthyxx.exceptions.ResourceNotFoundException;
 import br.com.arthyxx.mapper.ProdutoMapper;
@@ -11,7 +8,10 @@ import br.com.arthyxx.models.Categoria;
 import br.com.arthyxx.models.Produto;
 import br.com.arthyxx.repository.CategoriaRepository;
 import br.com.arthyxx.repository.ProdutoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,10 +27,16 @@ public class ProdutoService {
         this.mapper = mapper;
     }
 
-    public List<ProdutoResponseDTO> findAll(){
-        List<Produto> entities = produtoRepository.findAll();
+    @Transactional(readOnly = true)
+    public Page<ProdutoResponseDTO> findAll(ProdutoFilterDTO filter, Pageable pageable){
+        Page<Produto> produtos = produtoRepository.findAllWithFilter(
+                filter.name(),
+                filter.categoryId(),
+                filter.active(),
+                pageable
+        );
 
-        return mapper.toResponseDTOList(entities);
+        return produtos.map(produto -> mapper.toResponseDTO(produto));
     }
 
     public ProdutoResponseDTO findById(Long id){
