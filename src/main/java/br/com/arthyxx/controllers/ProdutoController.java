@@ -1,11 +1,10 @@
 package br.com.arthyxx.controllers;
 
-import br.com.arthyxx.dto.produto.CreateProdutoDTO;
-import br.com.arthyxx.dto.produto.PatchProdutoDTO;
-import br.com.arthyxx.dto.produto.ProdutoResponseDTO;
-import br.com.arthyxx.dto.produto.PutProdutoDTO;
+import br.com.arthyxx.dto.produto.*;
 import br.com.arthyxx.services.ProdutoService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +21,15 @@ public class ProdutoController {
     }
 
     @GetMapping
-    public List<ProdutoResponseDTO> findAll(){
-        return service.findAll();
+    public Page<ProdutoResponseDTO> findAll(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Boolean active,
+            Pageable pageable
+    ){
+        ProdutoFilterDTO filter = new ProdutoFilterDTO(name, categoryId, active);
+
+        return service.findAll(filter, pageable);
     }
 
     @GetMapping("/{id}")
