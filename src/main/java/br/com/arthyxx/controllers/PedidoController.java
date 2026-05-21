@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -33,6 +34,12 @@ public class PedidoController {
     @GetMapping("/{id}")
     public PedidoResponseDTO findById(@PathVariable Long id){
         return service.findById(id);
+    }
+
+    @Operation(summary = "Listar pedidos do cliente logado")
+    @GetMapping("/meus-pedidos")
+    public List<PedidoResponseDTO> findMyPedidos(Authentication authentication){
+        return service.findMyPedidos(authentication.getName());
     }
 
     @Operation(summary = "Criar pedido")
