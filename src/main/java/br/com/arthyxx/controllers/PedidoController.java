@@ -30,16 +30,22 @@ public class PedidoController {
         return service.findAll();
     }
 
-    @Operation(summary = "Buscar pedido por ID")
-    @GetMapping("/{id}")
-    public PedidoResponseDTO findById(@PathVariable Long id){
-        return service.findById(id);
-    }
-
     @Operation(summary = "Listar pedidos do cliente logado")
     @GetMapping("/meus-pedidos")
     public List<PedidoResponseDTO> findMyPedidos(Authentication authentication){
         return service.findMyPedidos(authentication.getName());
+    }
+
+    @Operation(summary = "Buscar pedido do cliente logado por ID")
+    @GetMapping("/meus-pedidos/{id}")
+    public PedidoResponseDTO findMyPedidoById(@PathVariable Long id, Authentication authentication){
+        return service.findMyPedidoById(id, authentication.getName());
+    }
+
+    @Operation(summary = "Buscar pedido por ID")
+    @GetMapping("/{id}")
+    public PedidoResponseDTO findById(@PathVariable Long id){
+        return service.findById(id);
     }
 
     @Operation(summary = "Criar pedido")

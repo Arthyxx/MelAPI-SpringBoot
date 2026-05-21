@@ -61,6 +61,19 @@ public class PedidoService {
         return mapper.toResponseDTOList(pedidos);
     }
 
+    @Transactional(readOnly = true)
+    public PedidoResponseDTO findMyPedidoById(Long pedidoId, String email){
+        Cliente cliente = clienteRepository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("Cliente não encontrado!")
+        );
+
+        Pedido pedido = pedidoRepository.findByIdAndClienteId(pedidoId, cliente.getId()).orElseThrow(
+                () -> new ResourceNotFoundException("Pedido não encontrado para este cliente.")
+        );
+
+        return mapper.toResponseDTO(pedido);
+    }
+
     @Transactional
     public PedidoResponseDTO create(CreatePedidoDTO dto){
         Cliente cliente = findClienteById(dto.clienteId());
