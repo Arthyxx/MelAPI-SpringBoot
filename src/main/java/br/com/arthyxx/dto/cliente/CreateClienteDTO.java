@@ -29,6 +29,9 @@ public record CreateClienteDTO(
         @Size(max = 20, message = "O número deve ter no máximo 20 caracteres.")
         String addressNumber,
 
+        @Size(max = 100, message = "O complemento deve ter no máximo 100 caracteres.")
+        String complement,
+
         @NotBlank(message = "O bairro é obrigatório.")
         @Size(max = 100, message = "O bairro deve ter no máximo 100 caracteres.")
         String neighborhood,

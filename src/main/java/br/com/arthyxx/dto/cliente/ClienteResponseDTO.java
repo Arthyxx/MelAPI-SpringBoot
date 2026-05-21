@@ -9,6 +9,7 @@ public record ClienteResponseDTO(
         String phone,
         String street,
         String addressNumber,
+        String complement,
         String neighborhood,
         String city,
         String state,

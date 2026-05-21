@@ -36,6 +36,9 @@ public class Cliente implements UserDetails {
     private String addressNumber;
 
     @Column(length = 100)
+    private String complement;
+
+    @Column(length = 100)
     private String neighborhood;
 
     @Column(length = 80)
@@ -101,6 +104,14 @@ public class Cliente implements UserDetails {
 
     public void setStreet(String street) {
         this.street = street;
+    }
+
+    public String getComplement() {
+        return complement;
+    }
+
+    public void setComplement(String complement) {
+        this.complement = complement;
     }
 
     public String getAddressNumber() {

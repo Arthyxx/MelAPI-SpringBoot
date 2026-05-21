@@ -22,6 +22,9 @@ public record PatchClienteDTO(
         @Size(max = 20, message = "O número deve ter no máximo 20 caracteres.")
         String addressNumber,
 
+        @Size(max = 100, message = "O complemento deve ter no máximo 100 caracteres.")
+        String complement,
+
         @Size(max = 100, message = "O bairro deve ter no máximo 100 caracteres.")
         String neighborhood,
 
