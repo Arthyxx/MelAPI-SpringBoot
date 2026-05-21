@@ -10,6 +10,7 @@ import br.com.arthyxx.models.Cliente;
 import br.com.arthyxx.repository.ClienteRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,21 +26,22 @@ public class ClienteService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<ClienteResponseDTO> findAll(){
+    @Transactional(readOnly = true)
+    public List<ClienteResponseDTO> findAll() {
         List<Cliente> entities = repository.findAll();
 
         return mapper.toResponseDTOList(entities);
     }
 
-    public ClienteResponseDTO findById(Long id){
-        Cliente entity = repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Cliente não encontrado!")
-        );
+    @Transactional(readOnly = true)
+    public ClienteResponseDTO findById(Long id) {
+        Cliente entity = findClienteById(id);
 
         return mapper.toResponseDTO(entity);
     }
 
-    public ClienteResponseDTO create(CreateClienteDTO dto){
+    @Transactional
+    public ClienteResponseDTO create(CreateClienteDTO dto) {
         Cliente entity = mapper.toEntity(dto);
 
         entity.setPassword(passwordEncoder.encode(dto.password()));
@@ -47,35 +49,50 @@ public class ClienteService {
         return mapper.toResponseDTO(repository.save(entity));
     }
 
-    public ClienteResponseDTO update(Long id, PutClienteDTO dto){
-        Cliente entity = repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Cliente não encontrado!")
-        );
+    @Transactional
+    public ClienteResponseDTO update(Long id, PutClienteDTO dto) {
+        Cliente entity = findClienteById(id);
 
         mapper.updateFromPutDTO(dto, entity);
 
+        if (hasText(dto.password())) {
+            entity.setPassword(passwordEncoder.encode(dto.password()));
+        }
+
         Cliente updatedEntity = repository.save(entity);
 
         return mapper.toResponseDTO(updatedEntity);
     }
 
-    public ClienteResponseDTO partialUpdate(Long id, PatchClienteDTO dto){
-        Cliente entity = repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Cliente não encontrado!")
-        );
+    @Transactional
+    public ClienteResponseDTO partialUpdate(Long id, PatchClienteDTO dto) {
+        Cliente entity = findClienteById(id);
 
         mapper.updateFromPatchDTO(dto, entity);
 
+        if (hasText(dto.password())) {
+            entity.setPassword(passwordEncoder.encode(dto.password()));
+        }
+
         Cliente updatedEntity = repository.save(entity);
 
         return mapper.toResponseDTO(updatedEntity);
     }
 
-    public void delete(Long id){
-        Cliente entity = repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Cliente não encontrado!")
-        );
+    @Transactional
+    public void delete(Long id) {
+        Cliente entity = findClienteById(id);
 
         repository.delete(entity);
+    }
+
+    private Cliente findClienteById(Long id) {
+        return repository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Cliente não encontrado!")
+        );
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 }

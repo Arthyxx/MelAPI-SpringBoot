@@ -26,19 +26,32 @@ public class Cliente implements UserDetails {
     @Column(nullable = false, length = 100)
     private String password;
 
+    @Column(length = 20)
+    private String phone;
+
+    @Column(length = 120)
+    private String street;
+
+    @Column(name = "address_number", length = 20)
+    private String addressNumber;
+
+    @Column(length = 100)
+    private String neighborhood;
+
+    @Column(length = 80)
+    private String city;
+
+    @Column(length = 2)
+    private String state;
+
+    @Column(name = "zip_code", length = 10)
+    private String zipCode;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.CLIENTE;
 
     public Cliente() {
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
     }
 
     public Long getId() {
@@ -65,6 +78,7 @@ public class Cliente implements UserDetails {
         this.email = email;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -73,22 +87,73 @@ public class Cliente implements UserDetails {
         this.password = password;
     }
 
-    @Override
-    public boolean equals(Object o) {
-
-        if (o == null || getClass() != o.getClass()) return false;
-        Cliente cliente = (Cliente) o;
-        return Objects.equals(getId(), cliente.getId()) && Objects.equals(getName(), cliente.getName()) && Objects.equals(getEmail(), cliente.getEmail()) && Objects.equals(getPassword(), cliente.getPassword()) && getRole() == cliente.getRole();
+    public String getPhone() {
+        return phone;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getPassword(), getRole());
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getAddressNumber() {
+        return addressNumber;
+    }
+
+    public void setAddressNumber(String addressNumber) {
+        this.addressNumber = addressNumber;
+    }
+
+    public String getNeighborhood() {
+        return neighborhood;
+    }
+
+    public void setNeighborhood(String neighborhood) {
+        this.neighborhood = neighborhood;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.role == UserRole.ADMIN){
+        if (this.role == UserRole.ADMIN) {
             return List.of(
                     new SimpleGrantedAuthority("ROLE_ADMIN"),
                     new SimpleGrantedAuthority("ROLE_CLIENTE")
@@ -121,5 +186,17 @@ public class Cliente implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Cliente cliente = (Cliente) o;
+        return Objects.equals(id, cliente.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

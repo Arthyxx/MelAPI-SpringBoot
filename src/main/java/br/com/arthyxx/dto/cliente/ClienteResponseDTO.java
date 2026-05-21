@@ -6,6 +6,13 @@ public record ClienteResponseDTO(
         Long id,
         String name,
         String email,
+        String phone,
+        String street,
+        String addressNumber,
+        String neighborhood,
+        String city,
+        String state,
+        String zipCode,
         UserRole role
 ) {
 }
