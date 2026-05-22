@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,18 @@ public class ClienteController {
     @GetMapping("/{id}")
     public ClienteResponseDTO findById(@PathVariable Long id){
         return service.findById(id);
+    }
+
+    @Operation(summary = "Buscar cliente para a visualização de Perfil")
+    @GetMapping("/me")
+    public ClienteResponseDTO findMe(Authentication authentication){
+        return service.findMe(authentication.getName());
+    }
+
+    @Operation(summary = "Atualiza parcialmente os dados do cliente no Perfil")
+    @PatchMapping("/me")
+    public ClienteResponseDTO updateMe(Authentication authentication, @RequestBody @Valid PatchClienteDTO dto){
+        return service.updateMe(authentication.getName(), dto);
     }
 
     @Operation(summary = "Criar cliente")

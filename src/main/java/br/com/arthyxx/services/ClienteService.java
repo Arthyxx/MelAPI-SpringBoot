@@ -40,6 +40,32 @@ public class ClienteService {
         return mapper.toResponseDTO(entity);
     }
 
+    @Transactional(readOnly = true)
+    public ClienteResponseDTO findMe(String email){
+        Cliente entity = repository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("Cliente não encontrado!")
+        );
+
+        return mapper.toResponseDTO(entity);
+    }
+
+    @Transactional
+    public ClienteResponseDTO updateMe(String email, PatchClienteDTO dto){
+        Cliente entity = repository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("Cliente não encontrado!")
+        );
+
+        mapper.updateFromPatchDTO(dto, entity);
+
+        if (dto.password() != null && !dto.password().isBlank()){
+            entity.setPassword(passwordEncoder.encode(dto.password()));
+        }
+
+        Cliente updatedEntity = repository.save(entity);
+
+        return mapper.toResponseDTO(updatedEntity);
+    }
+
     @Transactional
     public ClienteResponseDTO create(CreateClienteDTO dto) {
         Cliente entity = mapper.toEntity(dto);
