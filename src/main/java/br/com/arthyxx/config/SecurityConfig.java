@@ -44,13 +44,13 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/api/produtos/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/produtos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/produtos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/produtos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/produtos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/produtos/**").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/api/categorias/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/categorias").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/categorias/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/categorias/**").hasRole("ADMIN")
