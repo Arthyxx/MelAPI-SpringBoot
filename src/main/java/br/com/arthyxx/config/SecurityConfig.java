@@ -47,16 +47,36 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/api/produtos/*/avaliacoes/pode-avaliar")
+                        .hasAnyRole("ADMIN", "CLIENTE")
+
+                        .requestMatchers(HttpMethod.POST, "/api/produtos/*/avaliacoes")
+                        .hasAnyRole("ADMIN", "CLIENTE")
+
+                        .requestMatchers(HttpMethod.PATCH, "/api/produtos/*/avaliacoes/minha")
+                        .hasAnyRole("ADMIN", "CLIENTE")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/produtos/*/avaliacoes/minha")
+                        .hasAnyRole("ADMIN", "CLIENTE")
+
+                        /*
+                         * Produtos públicos
+                         */
+
                         .requestMatchers(HttpMethod.GET, "/api/produtos/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/api/produtos/*/avaliacoes").hasAnyRole("ADMIN", "CLIENTE")
-                        .requestMatchers(HttpMethod.PATCH, "/api/produtos/*/avaliacoes/minha").hasAnyRole("ADMIN", "CLIENTE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/produtos/*/avaliacoes/minha").hasAnyRole("ADMIN", "CLIENTE")
+                        /*
+                         * Administração de produtos
+                         */
 
                         .requestMatchers(HttpMethod.POST, "/api/produtos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/produtos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/produtos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/produtos/**").hasRole("ADMIN")
+
+                        /*
+                         * Categorias
+                         */
 
                         .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/categorias").hasRole("ADMIN")
@@ -64,11 +84,24 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/categorias/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/categorias/**").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/api/pedidos/meus-pedidos").hasAnyRole("ADMIN", "CLIENTE")
-                        .requestMatchers(HttpMethod.GET, "/api/pedidos/meus-pedidos/*").hasAnyRole("ADMIN", "CLIENTE")
-                        .requestMatchers(HttpMethod.GET, "/api/pedidos", "/api/pedidos/*").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/pedidos").hasAnyRole("ADMIN", "CLIENTE")
-                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasRole("ADMIN")
+                        /*
+                         * Pedidos
+                         */
+
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/meus-pedidos")
+                        .hasAnyRole("ADMIN", "CLIENTE")
+
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/meus-pedidos/*")
+                        .hasAnyRole("ADMIN", "CLIENTE")
+
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos", "/api/pedidos/*")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/pedidos")
+                        .hasAnyRole("ADMIN", "CLIENTE")
+
+                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**")
+                        .hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )

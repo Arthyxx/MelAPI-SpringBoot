@@ -1,6 +1,7 @@
 package br.com.arthyxx.services;
 
 import br.com.arthyxx.dto.avaliacao.AvaliacaoProdutoResponseDTO;
+import br.com.arthyxx.dto.avaliacao.CanReviewProdutoDTO;
 import br.com.arthyxx.dto.avaliacao.CreateAvaliacaoProdutoDTO;
 import br.com.arthyxx.dto.avaliacao.PatchAvaliacaoProdutoDTO;
 import br.com.arthyxx.enums.StatusPedido;
@@ -43,6 +44,26 @@ public class AvaliacaoProdutoService {
         List<AvaliacaoProduto> avaliacoes = avaliacaoRepository.findByProdutoIdOrderByCreatedAtDesc(produtoId);
 
         return mapper.toResponseDTOList(avaliacoes);
+    }
+
+    @Transactional(readOnly = true)
+    public CanReviewProdutoDTO canReview(Long produtoId, String clienteEmail){
+        Produto produto = findProdutoById(produtoId);
+        Cliente cliente = findClienteByEmail(clienteEmail);
+
+        boolean clientePodeAvaliar = pedidoRepository.existsPedidoEntregueComProduto(cliente.getId(), produto.getId(), StatusPedido.ENTREGUE);
+
+        if (!clientePodeAvaliar){
+            return new CanReviewProdutoDTO(
+                    false,
+                    "Você poderá avaliar este produto após receber o pedido."
+            );
+        }
+
+        return new CanReviewProdutoDTO(
+                true,
+                "Você pode avaliar este produto."
+        );
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package br.com.arthyxx.controllers;
 
 import br.com.arthyxx.dto.avaliacao.AvaliacaoProdutoResponseDTO;
+import br.com.arthyxx.dto.avaliacao.CanReviewProdutoDTO;
 import br.com.arthyxx.dto.avaliacao.CreateAvaliacaoProdutoDTO;
 import br.com.arthyxx.dto.avaliacao.PatchAvaliacaoProdutoDTO;
 import br.com.arthyxx.services.AvaliacaoProdutoService;
@@ -28,6 +29,12 @@ public class AvaliacaoProdutoController {
     @GetMapping
     public List<AvaliacaoProdutoResponseDTO> findByProdutoId(@PathVariable Long produtoId){
         return service.findByProdutoId(produtoId);
+    }
+
+    @Operation(summary = "Verificar se o cliente logado pode avaliar o produto")
+    @GetMapping("/pode-avaliar")
+    public CanReviewProdutoDTO canReview(@PathVariable Long produtoId, Authentication authentication){
+        return service.canReview(produtoId, authentication.getName());
     }
 
     @Operation(summary = "Criar avaliação para um produto")
