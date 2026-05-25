@@ -39,7 +39,7 @@ public class ProdutoService {
                 pageable
         );
 
-        return produtos.map(produto -> mapper.toResponseDTO(produto));
+        return produtos.map(produto -> toResponseDTOWithReviews(produto));
     }
 
     public ProdutoResponseDTO findById(Long id){
