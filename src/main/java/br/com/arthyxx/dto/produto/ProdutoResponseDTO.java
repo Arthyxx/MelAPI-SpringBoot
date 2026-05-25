@@ -13,7 +13,13 @@ public record ProdutoResponseDTO(
         Integer stockQuantity,
         String imageUrl,
         boolean active,
+
+
         CategoriaResumoResponseDTO category,
+
+        Double averageRating,
+        Long reviewsCount,
+
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

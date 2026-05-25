@@ -6,6 +6,7 @@ import br.com.arthyxx.exceptions.ResourceNotFoundException;
 import br.com.arthyxx.mapper.ProdutoMapper;
 import br.com.arthyxx.models.Categoria;
 import br.com.arthyxx.models.Produto;
+import br.com.arthyxx.repository.AvaliacaoProdutoRepository;
 import br.com.arthyxx.repository.CategoriaRepository;
 import br.com.arthyxx.repository.ProdutoRepository;
 import org.springframework.data.domain.Page;
@@ -19,11 +20,13 @@ import java.util.List;
 public class ProdutoService {
     private final ProdutoRepository produtoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final AvaliacaoProdutoRepository avaliacaoProdutoRepository;
     private final ProdutoMapper mapper;
 
-    public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository, ProdutoMapper mapper) {
+    public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository, AvaliacaoProdutoRepository avaliacaoProdutoRepository, ProdutoMapper mapper) {
         this.produtoRepository = produtoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.avaliacaoProdutoRepository = avaliacaoProdutoRepository;
         this.mapper = mapper;
     }
 
@@ -42,7 +45,7 @@ public class ProdutoService {
     public ProdutoResponseDTO findById(Long id){
         Produto entity = findProdutoById(id);
 
-        return mapper.toResponseDTO(entity);
+        return toResponseDTOWithReviews(entity);
     }
 
     public ProdutoResponseDTO create(CreateProdutoDTO dto){
@@ -101,5 +104,27 @@ public class ProdutoService {
         }
 
         return categoria;
+    }
+
+    private ProdutoResponseDTO toResponseDTOWithReviews(Produto produto){
+        ProdutoResponseDTO dto = mapper.toResponseDTO(produto);
+
+        Double avarageRating = avaliacaoProdutoRepository.findAvarageRatingByProdutoId(produto.getId());
+        Long reviewsCount = avaliacaoProdutoRepository.countByProdutoId(produto.getId());
+
+        return new ProdutoResponseDTO(
+                dto.id(),
+                dto.name(),
+                dto.description(),
+                dto.price(),
+                dto.stockQuantity(),
+                dto.imageUrl(),
+                dto.active(),
+                dto.category(),
+                avarageRating,
+                reviewsCount,
+                dto.createdAt(),
+                dto.updatedAt()
+        );
     }
 }
