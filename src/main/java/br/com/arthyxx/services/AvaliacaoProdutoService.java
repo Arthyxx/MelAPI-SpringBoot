@@ -3,6 +3,7 @@ package br.com.arthyxx.services;
 import br.com.arthyxx.dto.avaliacao.AvaliacaoProdutoResponseDTO;
 import br.com.arthyxx.dto.avaliacao.CreateAvaliacaoProdutoDTO;
 import br.com.arthyxx.dto.avaliacao.PatchAvaliacaoProdutoDTO;
+import br.com.arthyxx.enums.StatusPedido;
 import br.com.arthyxx.exceptions.BusinessException;
 import br.com.arthyxx.exceptions.ResourceNotFoundException;
 import br.com.arthyxx.mapper.AvaliacaoProdutoMapper;
@@ -11,6 +12,7 @@ import br.com.arthyxx.models.Cliente;
 import br.com.arthyxx.models.Produto;
 import br.com.arthyxx.repository.AvaliacaoProdutoRepository;
 import br.com.arthyxx.repository.ClienteRepository;
+import br.com.arthyxx.repository.PedidoRepository;
 import br.com.arthyxx.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +25,14 @@ public class AvaliacaoProdutoService {
     private final AvaliacaoProdutoRepository avaliacaoRepository;
     private final ProdutoRepository produtoRepository;
     private final ClienteRepository clienteRepository;
+    private final PedidoRepository pedidoRepository;
     private final AvaliacaoProdutoMapper mapper;
 
-    public AvaliacaoProdutoService(AvaliacaoProdutoRepository avaliacaoRepository, ProdutoRepository produtoRepository, ClienteRepository clienteRepository, AvaliacaoProdutoMapper mapper) {
+    public AvaliacaoProdutoService(AvaliacaoProdutoRepository avaliacaoRepository, ProdutoRepository produtoRepository, ClienteRepository clienteRepository, PedidoRepository pedidoRepository, AvaliacaoProdutoMapper mapper) {
         this.avaliacaoRepository = avaliacaoRepository;
         this.produtoRepository = produtoRepository;
         this.clienteRepository = clienteRepository;
+        this.pedidoRepository = pedidoRepository;
         this.mapper = mapper;
     }
 
@@ -45,6 +49,10 @@ public class AvaliacaoProdutoService {
     public AvaliacaoProdutoResponseDTO create(Long produtoId, String clienteEmail, CreateAvaliacaoProdutoDTO dto){
         Produto produto = findProdutoById(produtoId);
         Cliente cliente = findClienteByEmail(clienteEmail);
+
+        boolean clientePodeAvaliar = pedidoRepository.existsPedidoEntregueComProduto(cliente.getId(), produto.getId(), StatusPedido.ENTREGUE);
+
+        if (!clientePodeAvaliar) throw new BusinessException("Você só pode avaliar produtos comprados e entregues.");
 
         if (avaliacaoRepository.existsByProdutoIdAndClienteId(produtoId, cliente.getId())){
             throw new BusinessException("Você já avaliou este produto. Edite sua avaliação existente.");
